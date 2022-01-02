@@ -12,7 +12,7 @@
 #define L(n) (n ? n->lchild : NULL)
 
 typedef struct Node {
-    int key, size;     //size用于记录节点数量 为了解决找到排名第k位元素问题
+    int key, size;                              // size用于记录节点数量 为了解决找到排名第k位元素问题
     struct Node *lchild, *rchild;
 } Node;
 
@@ -25,7 +25,7 @@ Node *getNewNode(int key) {
 }
 
 void update_size(Node *root) {
-    root->size = SIZE(root->lchild) + SIZE(root->rchild) + 1;    //左子树节点数量+右子树节点数量+根节点
+    root->size = SIZE(root->lchild) + SIZE(root->rchild) + 1;    // 左子树节点数量+右子树节点数量+根节点
     return ;
 }
 
@@ -36,9 +36,10 @@ int search(Node *root, int val) {
     return search(root->rchild, val);
 }
 
+// 寻找第k位元素
 int search_k(Node *root, int k) {
     if (root == NULL) return -1;
-    if (SIZE(L(root)) == k - 1) return root->key;   //SIZE(L(root)) 表示root左子树的大小 节点数量
+    if (SIZE(L(root)) == k - 1) return root->key;                // SIZE(L(root)) 表示root左子树的大小 节点数量
     if (k <= SIZE(L(root))) {
         return search_k(root->lchild, k);
     }
@@ -48,18 +49,20 @@ int search_k(Node *root, int k) {
 Node *insert(Node *root, int key) {
     if (root == NULL) return getNewNode(key);
     if (root->key == key) return root;
-    //插入操作有可能改变当前节点左子树的地址 因此要将返回值传给lchild
+    // 插入操作有可能改变当前节点左子树的地址 因此要将返回值传给lchild
     if (key < root->key) root->lchild = insert(root->lchild,key);
     else root->rchild = insert(root->rchild, key);   
-    update_size(root);        //更新节点数量 
+    update_size(root);                                           // 更新节点数量 
     return root;
 }
 
-//找root节点的前驱值  
-//为左子树中的最大值 有bug   
-//度为1的节点也有前驱  要改的话判断一下是否是度为1的节点再去找前驱
-//但是对于整体来说并没有bug 因为度为0和度为1的节点都会被先处理掉
-Node *predecessor(Node *root) {  //假设root是度为2的节点  前驱一定是root左子树中最大的值
+/*
+ * 找root节点的前驱值 为左子树中的最大值 有bug   
+ * 度为1的节点也有前驱  要改的话判断一下是否是度为1的节点再去找前驱
+ * 但是对于整体来说并没有bug 因为度为0和度为1的节点都会被先处理掉 
+*/
+Node *predecessor(Node *root) {  
+    // 假设root是度为2的节点  前驱一定是root左子树中最大的值
     Node *temp = root->lchild;
     while (temp->rchild) temp = temp->rchild;
     return temp;
@@ -79,16 +82,17 @@ Node *erase(Node *root, int val) {
             return NULL;
         } else 
         */
-        //可以将删除度为0的节点合并到这段代码中 因为逻辑都一样
-        if (root->lchild == NULL || root->rchild == NULL) {  //删除度为1的节点 
+        // 可以将删除度为0的节点合并到这段代码中 因为逻辑都一样
+        if (root->lchild == NULL || root->rchild == NULL) {  
+            // 删除度为1的节点 
             Node *temp = root->lchild ? root->lchild : root->rchild;
-            free(root);   //删除父节点 让孤儿子树挂到父节点上去
+            free(root);                                     // 删除父节点 让孤儿子树挂到父节点上去
             return temp;
         } else {
-            //删除度为2的节点  这部分可以查阅笔记 
-            Node *temp = predecessor(root);  //先找到前驱的值
-            root->key = temp->key;  //把前驱的值覆盖到root的键值
-            root->lchild = erase(root->lchild, temp->key);  //接着删除左子树上的前驱的值
+            // 删除度为2的节点  这部分可以查阅笔记 
+            Node *temp = predecessor(root);                 // 先找到前驱的值
+            root->key = temp->key;                          // 把前驱的值覆盖到root的键值
+            root->lchild = erase(root->lchild, temp->key);  // 接着删除左子树上的前驱的值
         }
     }
     update_size(root);
