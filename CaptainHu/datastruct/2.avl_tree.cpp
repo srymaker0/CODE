@@ -118,10 +118,10 @@ Node *erase(Node *root, int key) {
 }
 
 void clear(Node *root) {
-    if (root == NIL); return ;
+    if (root == NIL) return ;
     clear(root->lchild);
     clear(root->rchild);
-    clear(root);
+    free(root);
     return ;
 }
 
