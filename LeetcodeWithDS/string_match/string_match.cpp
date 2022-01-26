@@ -61,6 +61,37 @@ int kmp_2(const char *text, const char *pattern) {
     }
     return -1;
 }
+
+int sunday(const char *text, const char *pattern) {
+    #define BASE 256
+    int n = strlen(text), m;
+    int last_pos[BASE];
+    for (int i = 0; i < BASE; i++) last_pos[i] = -1;
+    for (m = 0; pattern[m]; ++m) last_pos[pattern[m]] = m;
+    for (int i = 0; i + m <= n; i += (m - last_pos[text[i + m]])) {
+        int flag = 1;
+        for (int j = 0; pattern[j]; j++) {
+            if (text[i + j] == pattern[j]) continue;
+            flag = 0;
+        }
+        if (flag) return i;
+    }
+    return -1;
+}
+
+int shift_and(const char *text, const char *pattern) {
+    int d[256];
+    int n;
+    for (n = 0; pattern[n]; ++n) d[pattern[n]] |= (1 << n);
+    int p = 0;
+    for (int i = 0; text[i]; i++) {
+        p = (p << 1 | 1) & d[text[i]];
+        if (p & (1 << (n - 1))) return i - n + 1;
+    }
+    return -1;
+}
+
+
 #define TEST(func, s1, s2) {\
     printf("%s(\"%s\", \"%s\") = %d\n", #func, s1, s2, func(s1, s2)); \
 }
