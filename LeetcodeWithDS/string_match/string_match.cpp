@@ -80,7 +80,7 @@ int sunday(const char *text, const char *pattern) {
 }
 
 int shift_and(const char *text, const char *pattern) {
-    int d[256];
+    int d[256] = {0};
     int n;
     for (n = 0; pattern[n]; ++n) d[pattern[n]] |= (1 << n);
     int p = 0;
@@ -101,6 +101,8 @@ int main() {
     while (cin >> s1 >> s2) {
         TEST(brute_force, s1, s2);
         TEST(kmp_1, s1, s2);
+        TEST(sunday, s1, s2);
+        TEST(shift_and, s1, s2);
     }
     return 0;
 }
