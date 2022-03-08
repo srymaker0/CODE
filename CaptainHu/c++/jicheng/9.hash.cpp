@@ -94,9 +94,10 @@ void HashTable::__expand() {
 
 bool HashTable::erase(string s) {
     int h = hash_func(s) % __size;
+    // 起点是虚拟头节点 p指向待删除节点的上一个节点
     for (Node *p = &data[h]; p->next(); p = p->next()) {
         if (p->next()->key() != s) continue;
-        p->erase_next();
+        p->erase_next();  
         data_cnt -= 1;
         return true;
     }
